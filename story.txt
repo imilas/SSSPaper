@@ -1,0 +1,70 @@
+
+Intro
+
+I want to generate drums!
+
+I want new drums!
+
+Can I generate programs to make drums?
+
+If I generate programs I will generate too many! How can I listen to them all? I can't!
+
+I have lots of samples of drums though! I can treat these as labels to learn what drums sound like.
+
+I can train an virtual drummer's ear to discriminate if a generated sound is a drum. Then I can learn ranges of synth parameters and programs that produce drums of certain types!
+
+*** Imagine you learned the distribution, now you have pippi going and you keep hitting kick and you hear a new kick each time and it is a kick because you know the distribution ***
+Prior work
+
+
+Ear Methodology
+Train a classifier on drum samples to produce ear
+Evaluate classifier with F-1 and other ML measures
+^ This methodology needs to be cross-folds validation or 80/20 split repeated 5 times
+Ear Results
+Our Ear is so successful see the results.
+
+Now we can use the ear to classify new sounds as drums
+Synth Generation Methodology
+We will generate synthesizer programs, synthesizer programs also include parameters for the synths internal to the program.
+A synthstack is a synthesizer program. Synths are synthesizer submodules like: oscillators etc.
+
+Successful synthesizer sounds typically are more complicated that 3 parameters and a filter, they typically have a schedule of parameters so the parameters can be a constrained timeseries.
+
+Drums allow us to keep these timeseries short.
+
+General methodology
+
+Search for a synth -> Given a generated synth, execute it, extract sound, compare sound in ear to drums, if it confidently makes a drum keep it
+
+Evaluate method by distribution of generated drums. Rank by confidence or distance to drum sounds.
+
+Sample 100 per category and YES/NO if it is a kick or snare or a hi hat etc.
+Random Search Methodology
+Search for a synth is replaced with random search whereby time or resources are given and many synths are generated and only the top confident synths are kept for evaluation. E.g. in 3 minutes return the best 10 synths in each category or for a given category here's 1 minute find a synth.
+
+Then go the general methodology for evaluation
+Genetic Search Methodology
+
+1 synth category is chosen. Random synths are seeded. fitness function is distance to synth category. Repeat.
+
+Then do the general methodology for the top ranked.
+Distribution Learning Methodology
+Based on prior searches build up a relationship between parameter distributions and categories
+Learn the parameters. Sample parameters from the distribution for a specific category and ...
+
+Then do the general methodology for the top ranked.
+
+Evaluation Results
+
+Compare Random Search, Genetic Search, and Distribution Sampling in terms of F-1 and different category.
+
+Sample some of the results and listen to them.
+
+Discussion
+
+Discuss future uses
+Conclusions
+Brief summary
+
+Conclude results and direction it points
