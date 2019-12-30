@@ -1,37 +1,54 @@
-\documentclass{article}
+\documentclass{nime-alternate} % Uncomment when publishing final version
+% Uncomment only one of the ones below
+\usepackage{anonymize} 		   %Uncomment this line to publish
+% \usepackage[blind]{anonymize}%Uncomment this line for blind review
 \usepackage[utf8]{inputenc}
-
-\title{SynthStackSearch}
-\author{Amir Salimi}
-\date{December 2019}
 
 \usepackage{float}
 \usepackage{natbib}
 \usepackage{graphicx}
 \usepackage{todonotes}
 \usepackage{etoolbox}
-
+\usepackage[inline]{enumitem}
 \begin{document}
+
+% --- Author Metadata here. See Template---
+\conferenceinfo{NIME'20,}{July 21-25, 2020, Royal Birmingham Conservatoire, ~~~~~~~~~~~~ Birmingham City University, Birmingham, United Kingdom.}
+\title{SSS}
+
+\label{key}
+\numberofauthors{2} 
+\author{
+\alignauthor
+\anonymize{Amir Salimi}\\
+       \affaddr{\anonymize{Department of Computing Science}}\\
+       \affaddr{\anonymize{University of Alberta}}\\
+       \affaddr{\anonymize{Edmonton,AB,Alberta}}\\
+       \email{\anonymize{asalimi@ualberta.ca}}
+\alignauthor
+\anonymize{Abram Hindle}\\
+       \affaddr{\anonymize{Department of Computing Science}}\\
+       \affaddr{\anonymize{University of Alberta}}\\
+       \affaddr{\anonymize{Edmonton,AB,Alberta}}\\
+       \email{\anonymize{abram.hindle@ualberta.ca}}
+}
+
 \maketitle
 
-\section{Introduction}
-\subsection{Purpose of this document}
-The purpose of this document is to give a summary of what has been done for this project so far and what needs to be done in the future. Also, to facilitate setting of milestones for what should be done before the up-coming NIME paper deadline; taking into account Dr.Hindle's purported exile on Janurary 1st. The bulk of the paper should be done within the next 2-3 weeks and the focus should be on improvements from then on. 
-\subsection{Purpose of project}
-The purpose of this project is to synthetically generate high-quality and novel one-shot drum samples of various categories. Each category of drum being defined by example; using numerous pre-recorded drum samples as a reference for the common characteristics of the group. 
+\begin{abstract}
+With generation of novel, high quality, one shot percussive sounds as our end goal, we implemented a set of modular software components utilized to form a pipeline for guided generation of sounds. The most crucial of these components are a "virtual ear" capable of evaluating generated sounds and an efficient, tractable "virtual synthesizer" capable of generating a wide range of sounds.\\ 
+We can implement and utilize our components in various ways leading to different outcomes; hence, here first discuss our various methods of implementation, evaluation, and limitation of these components. Next, we discuss three methodologies utilized for the creation of percussive sounds and their efficiencies:  \begin {enumerate*} [label=\itshape\alph*\upshape)]
+\item random generation \item multivariate distribution sampling and \item evolutionary search.
+\end {enumerate*} 
+\end{abstract}
 
-\subsection{Motivation: Why is this project useful?}
-\todo[inline]{Beyond personal reasons, literature review is needed to provide a good response to this question}
+\keywords{MIR,drums,generation,search}
 
-\subsection{Dataset}
-We have thousands of royalty free (but not public domain) short (under 1 sec) samples organized into different categories. Most of these categories are drums (kicks, snares, hats, shakers, etc). But there are non-drum categories such as short piano and guitar samples as well. The main sources for our dataset are:
-\begin{itemize}
-    \item personal library: not share-able
-    \item Music Radar royalty free packs automatically downloaded, chopped up (if appropriate) and separated into different groups (see the "getting\_data" section of the project code for scripts, written in shell). The data is not share-able but the scripts are.
-    \item  sampleswap.org: a source for 8 gigabytes of public domain sounds. Can be downloaded entirely for 30 bucks and shared freely thereafter\todo[]{(Not used yet)}
-\end{itemize}
+% See template for CCS classification. 
+\ccsdesc[500]{Applied computing~Sound and music computing}
+\ccsdesc[300]{Information systems~Music retrieval}
+\printccsdesc
 
-\todo[inline, color=green!40]{Note: While royalty free audio is not necessarily legal to share, the corresponding image spectrums are}
 
 \section{Implementation}
 \subsection{Design}
@@ -80,7 +97,7 @@ There are two interconnected temporal trends to consider:
     \item Overall amplitude change within a sample. Closely linked to ADSR. 
 \end{itemize}{}
 
-Temporal trends are can be deduced from a spectrum representation of sound (at least visually by a human). A convolution net trained on our drum dataset led to an ear good enough to continue to the next stage of the project. The current model does an adequate job of rejecting junk data and semi-robustly rejects samples with inappropriate wave-shapes,\todo[color=red!40]{but leaves much room for improvements}.
+Temporal trends are can be deduced from a spectrum representation of sound (at least visually by a human). A convolution net trained on our drum dataset led to an ear good enough to continue to the next stage of the project. The current model does an adequate job of rejecting junk data and semi-robustly rejects samples with inappropriate wave-shapes.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{images/cnn_ear.png}
@@ -115,43 +132,10 @@ Important to highlight is that thus far we have only used 1 Synth to generate ou
 \subsection{Guided Generation Attempts}
 
 \subsubsection{Multivariate Normal}
-Some success and extremely fast and scalable once the parameter space is calculated. Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. \todo[color=green!40]{provide example as proof. e.g: bimodal parameter}
+Some success and extremely fast and scalable once the parameter space is calculated. Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. 
 
 \subsubsection{Evolutionary Search}
 Implemented evolutionary search using DEAP \citep{DEAP_JMLR2012}. A parameter set is assumed to be an individual with each parameter being its genes. To measure an individuals fitness, we use the formula $fitness=score-rank$. As generations evolve, a Hall-of-Fame list with a fixed size tracks the best individuals to ever live in any given generation, updating itself after each batch of off-springs is evaluated.\\
-To ensure diversity of the HOF individuals, the fitness score should also consider some measure of uniqueness. A weighted minkowski distance \footnote{https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html} between the genes of an offspring and the HOF individuals may be a good measurement.\todo[color=orange!40]{Medium Priority} \\
+To ensure diversity of the HOF individuals, the fitness score should also consider some measure of uniqueness. A weighted minkowski distance \footnote{https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html} between the genes of an offspring and the HOF individuals may be a good measurement.\\
 A generation of $N$ individuals are initialized(randomly or using already existing ranked parameters). To create the offspring generation, each generation goes through mutations and in-place gene crossovers. The new generation consists of the top 80\% of the offspring generation and 20\% new individuals to quicken gene diversity. If the new individuals are coming directly from previously measured high scoring parameter sets, we ensure that they cannot be directly added to HOF without going through mutations and crossovers first. 
-
-
-
-\section{Priorities}
-\subsection{Highest Priorities}
-\subsubsection{Lit Review}
-Extremely lacking at the moment. A few hours spent on the linguistics research was not very fruitful. Will revisit and further explore papers related to project magenta, WaveGans and adversarial audio generation in the upcoming days. \\
-Also necessary is to search for related NIME papers to help with methodology improvements, paper motivation and guiding the writing process.  
-\subsubsection{Ear improvements}
-Great potential for improvements as well as great benefits for improvements make this the highest priority in terms of programming. A better ear means better generated sounds and more confidence in our measurements.
-Relevant tasks:
-\begin{itemize}
-    \item Proper envelope detection
-    \item LSTM ear
-    \item Dealing with, and necessity of, a junk/noise class
-\end{itemize}
-\subsection{Medium Priorities}
-\subsubsection{Search Improvements}
-Search works but is highly dependent on the ear.\\ 
-How well evo search work for each category? How to measure it "working"
-\subsubsection{Using Stacks of size larger than 1}
-Single stacks are powerful, but larger would be nice. 
-\subsubsection{AutoEncoder Networks}
-Implement variational auto-encoders for drum generation as an alternative to our method. 
-\subsubsection{Generated Drums Survey}
-Powered by 'diffrent music'. All we need is good generated drums.
-\subsection{Low Priorities}
-\subsubsection{SampleSwap}
-Sign up
-\subsubsection{Notebook Cleanups}
-Cleanup notebooks, add them to the report
-\bibliographystyle{plain}
-\bibliography{references}
 \end{document}

@@ -9,8 +9,8 @@ Can I generate programs to make drums?
 
 If I generate programs I will generate too many! How can I listen to them all? I can't!
 
-I have lots of samples of drums though! I can treat these as labels to learn what drums sound like.
-
+ I have lots of samples of drums though! I can treat these as labels to learn what drums sound like.+
+  
 I can train an virtual drummer's ear to discriminate if a generated sound is a drum. Then I can learn ranges of synth parameters and programs that produce drums of certain types!
 
 *** Imagine you learned the distribution, now you have pippi going and you keep hitting kick and you hear a new kick each time and it is a kick because you know the distribution ***
