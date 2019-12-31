@@ -36,20 +36,20 @@
 \maketitle
 
 \begin{abstract}
-With generation of novel, high quality, one shot percussive sounds as our end goal, we implemented a set of modular software components utilized to form a pipeline for guided generation of sounds. The most crucial of these components are a "virtual ear" capable of evaluating generated sounds and an efficient, tractable "virtual synthesizer" capable of generating a wide range of sounds.\\ 
-We can implement and utilize our components in various ways leading to different outcomes; hence, here first discuss our various methods of implementation, evaluation, and limitation of these components. Next, we discuss three methodologies utilized for the creation of percussive sounds and their efficiencies:  \begin {enumerate*} [label=\itshape\alph*\upshape)]
-\item random generation \item multivariate distribution sampling and \item evolutionary search.
+With the generation of novel, high quality, one shot percussive sounds as our end goal, we implemented a set of modular software components utilized to form a pipeline for guided generation of sounds. The most crucial of these components are a "virtual ear" capable of evaluating a sounds proximity to different drum types and an efficient, tractable "virtual synthesizer" with a rich set of parameters and DSP methods capable of generating a wide range of sounds.\\ 
+Following the Unix Philosophy \cite{gancarz2003linux}, we designed our software such that we can utilize our components in various ways leading to different outcomes; hence, in order to established an adequate level of confidence in our components, we discuss the implementation, limitations, and evaluations of the "virtual synthesizer" and "virtual ear". Next, we present our findings and assessments in regards to the three different methodologies utilized for the generative process of percussive sounds:  \begin {enumerate*} [label=(\roman*)]
+\item random generation \item multivariate distribution sampling and \item evolutionary search.\\
 \end {enumerate*} 
+Finally, we observed a general lack of copyright-free percussive sample-packs as well as a lack of unified approach for obtaining such a data-set by fellow researchers \cite{aouameur2019neural,ramires2019timbfeat}. We aim to ameliorate this issue by presenting a copyright free sample-pack of categorized percussion sounds. Furthermore, we have included in our project source code \footnote{\url{https://github.com/imilas/Synths_Stacks_Search}} a set of scripts to further expand the sample pack via royalty free sources. 
+\keywords{drum, percussion, synthesis, MIR, ML, genetic, search}
 \end{abstract}
-
-\keywords{MIR,drums,generation,search}
-
 % See template for CCS classification. 
 \ccsdesc[500]{Applied computing~Sound and music computing}
-\ccsdesc[300]{Information systems~Music retrieval}
+\ccsdesc[500]{Information systems~Music retrieval}
 \printccsdesc
 
-
+\section{Introduction}
+The rise of Digital Audio Workstations (DAW) \cite{leider2004digital} and Virtual Studio Technology (VST) based plug-ins \cite{tanev2013virtual} have rapidly transformed the sonic and material landscape of music production in the recent years. Coupled with this rise in popularity is a vast array of commercial products and services dedicated to satiating the need of amateur and professional music producers for unique sounds; most commonly via audio samples: one-shot drum samples, long sustained notes (commonly refered to as pads or textures), percussive or melodic loops etc. Two notable examples of these commercial services are \textit{loopmasters}\footnote{loopmasters.com} and \textit{splice.com}\footnote{splice.com}. Furthermore VST plug-ins can emulate complex audio synthesizers or effects, which some producers may find daunting to work with from scratch. In many cases, VST plug-in vendors or unaffiliated enthusiasts may sell additional presets for these plugins, targeted towards producers who do not have the time or interest in creating their own.\\
 \section{Implementation}
 \subsection{Design}
 Towards our goal of generating original audio, we assumed that there are at least 2 major components needed:
@@ -138,4 +138,8 @@ Some success and extremely fast and scalable once the parameter space is calcula
 Implemented evolutionary search using DEAP \citep{DEAP_JMLR2012}. A parameter set is assumed to be an individual with each parameter being its genes. To measure an individuals fitness, we use the formula $fitness=score-rank$. As generations evolve, a Hall-of-Fame list with a fixed size tracks the best individuals to ever live in any given generation, updating itself after each batch of off-springs is evaluated.\\
 To ensure diversity of the HOF individuals, the fitness score should also consider some measure of uniqueness. A weighted minkowski distance \footnote{https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html} between the genes of an offspring and the HOF individuals may be a good measurement.\\
 A generation of $N$ individuals are initialized(randomly or using already existing ranked parameters). To create the offspring generation, each generation goes through mutations and in-place gene crossovers. The new generation consists of the top 80\% of the offspring generation and 20\% new individuals to quicken gene diversity. If the new individuals are coming directly from previously measured high scoring parameter sets, we ensure that they cannot be directly added to HOF without going through mutations and crossovers first. 
+
+
+\bibliographystyle{abbrv}
+    \bibliography{nime-references} 
 \end{document}
