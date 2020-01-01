@@ -37,7 +37,7 @@
 
 \begin{abstract}
 With the generation of novel, high quality, one shot percussive sounds as our end goal, we implemented a set of modular software components utilized to form a pipeline for guided generation of sounds. The most crucial of these components are a "virtual ear" capable of evaluating a sounds proximity to different drum types and an efficient, tractable "virtual synthesizer" with a rich set of parameters and DSP methods capable of generating a wide range of sounds.\\ 
-Following the Unix Philosophy \cite{gancarz2003linux}, we designed our software such that we can utilize our components in various ways leading to different outcomes; hence, in order to established an adequate level of confidence in our components, we discuss the implementation, limitations, and evaluations of the "virtual synthesizer" and "virtual ear". Next, we present our findings and assessments in regards to the three different methodologies utilized for the generative process of percussive sounds:  \begin {enumerate*} [label=(\roman*)]
+We aimed to design our software such that we can utilize our components in various experimental ways; hence, in order to established an adequate level of confidence in our components, we discuss the implementation, limitations, and evaluations of the "virtual synthesizer" and "virtual ear". Next, we present our findings and assessments in regards to the three different methodologies utilized for the generative process of percussive sounds:  \begin {enumerate*} [label=(\roman*)]
 \item random generation \item multivariate distribution sampling and \item evolutionary search.\\
 \end {enumerate*} 
 Additionally, as we observed a general lack of copyright-free percussive sample-packs as well as a lack of unified approach for obtaining such a data-set by fellow researchers \cite{aouameur2019neural,ramires2019timbfeat}, we aim to ameliorate the issue by presenting a copyright free sample-pack of categorized percussion sounds. Furthermore, we have included in our project source code \footnote{\url{https://github.com/imilas/Synths_Stacks_Search}} a set of scripts to further expand the sample pack via royalty free sources. 
@@ -49,27 +49,37 @@ Additionally, as we observed a general lack of copyright-free percussive sample-
 \printccsdesc
 
 \section{Introduction}
-\subsection{Motivation}
-The rise of Digital Audio Workstations (DAW) \cite{leider2004digital} and Virtual Studio Technology (VST) based plug-ins \cite{tanev2013virtual} have rapidly transformed the sonic and material landscape of music production in the recent years. Coupled with this rise in popularity is a vast array of commercial products and services dedicated to satiating the need of amateur and professional music producers for unique sounds; most commonly via audio samples: one-shot drum samples, long sustained notes (commonly refered to as pads or textures), percussive or melodic loops etc. Two notable examples of these commercial services are \textit{loopmasters}\footnote{loopmasters.com} and \textit{splice.com}\footnote{splice.com}. Furthermore VST plug-ins can emulate complex audio synthesizers and effects, which some producers may find daunting to work with from scratch. In many cases, VST plug-in vendors or unaffiliated enthusiasts may sell additional presets for these plugins, targeted towards producers who do not have the time or interest in creating their own.\\
+\subsection{Background and Motivation}
+The rise of Digital Audio Workstations (DAW) \cite{leider2004digital} and Virtual Studio Technology (VST) based plug-ins \cite{tanev2013virtual} have rapidly transformed the sonic and material landscape of music production in the recent years. Coupled with this rise in popularity is a vast array of commercial products and services dedicated to satiating the need of amateur and professional music producers for unique sounds; most commonly via audio samples: one-shot drum samples, long sustained notes (commonly refered to as pads or textures), percussive or melodic loops etc. Two notable examples of these commercial services are \textit{loopmasters}\footnote{loopmasters.com} and \textit{splice.com}\footnote{splice.com}. Furthermore VST plug-ins can emulate complex audio synthesizers and effects, which some producers may find daunting or time consuming to work with from scratch. In many cases, VST plug-in vendors or unaffiliated enthusiasts sell additional presets for these plugins, targeted towards producers who do not have the time or interest in creating their own. Once a preset is loaded in a VST plug-in, the GUI of the plug-in is updated. Users may modify any loaded preset until their desired sound is observed.\\
+Our work is motivated by the idea of finding new, convenient methods for the expansion of a music producer's library of sounds. Primarily with generation of novel, one-shot audio samples but also with automated search and creation of presets for virtual synthesizers that a producer might find  interesting. Using the generation of short, percussive audio samples as a starting point, this project is a proof of concept for promising avenues towards our motivational goal.\\
 
-\subsection{Methodology and Related Work}
-Numerous deep, Neural Network models have been proposed and utilized for the purpose of signal generation in recent years. WaveGans and WaveNet have been subject to significant improvements and experiments since their proposal \cite{nsynth2017} and Variational AutoEncoders (VAE's) have been utilized for generation of short percussive samples by \cite{aouameur2019neural,ramires2019timbfeat}. In this work however, we opt to use digital signal processing methods to create a virtual synthesizer for the generation of audio signals, as it meets several unique requirements:
+\subsection{Methodology}
+Towards our goal of generating original audio, we found the proper implementation of 2 major components to be crucial:
+\begin{itemize}
+    \item \textit{Virtual Synthesizer}:A flexible, deterministic, and tractable generator which can create audio. The core of our implementation made use of pippi, \footnote{https://github.com/luvsound/pippi} a fast, offline focused python DSP library with a C backend. We additionally used the scipy \cite{jones2001scipy} library a few audio effects that we found lacking in pippi. 
+    \item \textit{Virtual Ear}: An ear that returns an evaluation of an audio sample; estimating the effectiveness of an audio sample's fulfillment of a producers requirements. The implementation and training of the ear guides the generation process towards a desired path.\\
+\end{itemize}
+Following the Unix Philosophy \cite{gancarz2003linux}, our components are designed with modularity and parallelizability in mind. This allows each component to be debugged, modified and improved without requiring modifications in other components; additionally, increasing the scalability and speed of experiments.
+Section \ref{impl} contains further discussion of the components as well as the code that glues the project together can be found in .\\ 
+While the main focus of this project is the generation of novel percussive sounds, our methodology indicates promising results with regards to creation of new presets for any virtual synth without the need for a-priori knowledge of the functions of its parameters (i.e the effect of parameter modulation on the sonic output). We also demonstrate the viability of a few lesser explored avenues for the purposes of audio synthesis and Music Information Retrieval (MIR), notably:
+\begin{enumerate}[label=\roman*]
+\item Heuristic search methods for the creation of new presets for virtual synthesizers. More concretely, we observed that given a virtual ear which could reliably score pieces of audio based on its resemblance to a desired category (e.g:kicks,snares,piano), we were able to rapidly search the parameters of a virtual synthesizer and create numerous parameter-sets (i.e presets) which resemble our desired category of sounds.
+\item The viability of virtual synthesizers based on Digital Signal Processing (DSP) methods for fast, unsupervised creation of novel audio, discussed in more detail in section \ref{related}. \\
+\end{enumerate}
+
+\subsection{Related Work and Contradistinctions}
+\label{related}
+Numerous deep, neural network models have been proposed and utilized for the purpose of signal generation in recent years. WaveGans and WaveNet have been subject to significant improvements and experiments since their proposal \cite{nsynth2017} and recently, Variational AutoEncoders (VAE's) have been utilized for generation of short percussive samples \cite{aouameur2019neural,ramires2019timbfeat}. In this work however, we opt to use digital signal processing methods to create a virtual synthesizer for the generation of audio signals, as it provides several unique advantages:
 \begin{enumerate}[label=\roman*]
   \item Fast, offline rendering of audio with no relience on GPU, currently not possible with state of the art models such as parallel WaveGan \cite{yamamoto2019parallel} and parallell WaveNet \cite{oord2017parallel}. 
-  \item Rendering at high sampling rates with little performance issues: A significant number of untrained ears can detect a change in quality between sampling rates of 192 khz and 44.1 khz \cite{reiss2016meta}, with a dramatic increase following extensive training. Thus we can assume that most producers would prefer their audio samples to have as high of a resolution as possible. However, most commonly to speed up performance, the standard sampling rate in most audio generation work neural networks appears to be 24 khz or less \cite{yamamoto2019parallel,oord2017parallel,aouameur2019neural,ramires2019timbfeat}
+  \item Rendering at high sampling rates with little performance issues: Commonly, likely to speed up performance, the standard sampling rate in most audio generation work with neural networks appears to be under 24 khz. However, a significant number of untrained human ears can detect a change in quality of audio between sampling rates of 192 khz and the industry standard of 44.1 khz \cite{reiss2016meta}, with a dramatic increase in quality detection after training. Therefore we can safely assume that most producers would prefer their audio samples have sampling rates of 44.1 khz or higher. \cite{yamamoto2019parallel,oord2017parallel,aouameur2019neural,ramires2019timbfeat}
   \item Neural networks are often viewed as unexplainable black box solutions. Some models such as VAE's can learn an underlying latent space of parameters and capture the "essence" of the different labels in a dataset. However, these spaces are learned in an unsupervised manner and must be manually analysed, perhaps extensively, before they can be understood \cite{esling2018generative}. The use of a virtual synthesizer for audio generation makes our parameters readily understandable and easily modifiable. 
 \end{enumerate}
 
 \section{Implementation}
+\label{impl}
 \subsection{Design}
-Towards our goal of generating original audio, we assumed that there are at least 2 major components needed:
-\begin{itemize}
-    \item A flexible, deterministic, and tractable generator which can create audio
-    \item An ear that returns an evaluation of an audio sample; used to determine whether the audio sample fulfills the requirements. 
-\end{itemize}
-
-These components are designed with modularity and parallelizability in mind. This allows each component to be debugged, modified and improved without affecting the other components. More importantly, greatly increasing the ease of scalability and speed of experiments.
-The major and minor components as well as the code that glues the project together will be discussed further in this document. 
+ 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{images/SSS_gen.png}
