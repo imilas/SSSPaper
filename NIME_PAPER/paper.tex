@@ -14,7 +14,7 @@
 
 % --- Author Metadata here. See Template---
 \conferenceinfo{NIME'20,}{July 21-25, 2020, Royal Birmingham Conservatoire, ~~~~~~~~~~~~ Birmingham City University, Birmingham, United Kingdom.}
-\title{SSS}
+\title{Rapid, Unsupervised Generation of Novel Percussive Sounds With A Tractable Virtual Synthesizer}
 
 \label{key}
 \numberofauthors{2} 
@@ -49,6 +49,8 @@ Additionally, as we observed a general lack of copyright-free percussive sample-
 \printccsdesc
 
 \section{Introduction}
+\subsection{Terminology}
+Will define terms such as VSTs, audio effects, Synthesizers, paramters and presets here. I throw these terms around a lot and I think some might be confused by their meaning.
 \subsection{Background and Motivation}
 The rise of Digital Audio Workstations (DAW) \cite{leider2004digital} and Virtual Studio Technology (VST) based plug-ins \cite{tanev2013virtual} have rapidly transformed the sonic and material landscape of music production in the recent years. Coupled with this rise in popularity is a vast array of commercial products and services dedicated to satiating the need of amateur and professional music producers for unique sounds; most commonly via audio samples: one-shot drum samples, long sustained notes (commonly refered to as pads or textures), percussive or melodic loops etc. Two notable examples of these commercial services are \textit{loopmasters}\footnote{loopmasters.com} and \textit{splice.com}\footnote{splice.com}. Furthermore VST plug-ins can emulate complex audio synthesizers and effects, which some producers may find daunting or time consuming to work with from scratch. In many cases, VST plug-in vendors or unaffiliated enthusiasts sell additional presets for these plugins, targeted towards producers who do not have the time or interest in creating their own. Once a preset is loaded in a VST plug-in, the GUI of the plug-in is updated. Users may modify any loaded preset until their desired sound is observed.\\
 Our work is motivated by the idea of finding new, convenient methods for the expansion of a music producer's library of sounds. Primarily with generation of novel, one-shot audio samples but also with automated search and creation of presets for virtual synthesizers that a producer might find  interesting. Using the generation of short, percussive audio samples as a starting point, this project is a proof of concept for promising avenues towards our motivational goal.\\
@@ -81,31 +83,31 @@ Automatic programming of virtual synthesizers has also been a topic of interest.
 \label{impl}
 \subsection{Design}
  
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{images/SSS_gen.png}
-\caption{Generation Pipeline}
-\label{fig:SSS generator}
-\end{figure}
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.9\textwidth]{images/SSS_gen.png}
+% \caption{Generation Pipeline}
+% \label{fig:SSS generator}
+% \end{figure}
 
 \subsection{The Generator}
 We used the python based Pippi library for our generator implementation\footnote{https://github.com/luvsound/pippi}. This library uses a C back-end and focuses on fast offline generation. We define a Synth as the smallest unit of sound generation. A single Synth can be fairly expressive on its own, but we also allow a combination of Synths, which we call a Synth Stack. Each Synth takes in multiple parameters (parameter-set) and generates a sound. If the stack size is larger than 1, the combination of these individual parameter-sets is treated as the parameter-set for the stack. 
 
 \subsection{The Ear}
 The most challenging and important component of the project; the ear can be any method of evaluating a piece of audio. The most basic representation of a piece of digital audio is via list of numbers and a sampling-rate. For simplicity, we fix the sampling rate to 41,000 per second across all components of this project. An array representation of audio is the representation of the audio within the time domain. More commonly, the frequency domain is used for MIR tasks.
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{images/SSS_ear.png}
-\caption{Evaluation Using the Ear}
-\label{fig:SSS generator}
-\end{figure}
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=\textwidth]{images/SSS_ear.png}
+% \caption{Evaluation Using the Ear}
+% \label{fig:SSS generator}
+% \end{figure}
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\textwidth]{images/specplot.png}
-\caption{Mel-spectrum representation of a randomly generated sample}
-\label{fig:SSS generator}
-\end{figure}
+% \begin{figure}[h!]
+% \centering
+% \includegraphics[width=0.5\textwidth]{images/specplot.png}
+% \caption{Mel-spectrum representation of a randomly generated sample}
+% \label{fig:SSS generator}
+% \end{figure}
 All we require from the ear is to give us probabilities of an audio sample belonging to various sound (drum and none-drum) categories. It should be self-evident that these probabilities should sum up to 1.\\
 
 We have implemented several methods of feature extraction thus far and successfully separated different drum categories in interesting ways, visualized in the "interactive\_separation\_graph.ipynb" notebook. A common pitfall of most feature extraction methods implemented is that they do not consider the temporal trends within the audio, making them highly susceptible to errors when evaluating audio that should not belong to any of the categories.\\

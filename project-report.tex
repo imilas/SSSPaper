@@ -43,24 +43,24 @@ Towards our goal of generating original audio, we assumed that there are at leas
 
 These components are designed with modularity and parallelizability in mind. This allows each component to be debugged, modified and improved without affecting the other components. More importantly, greatly increasing the ease of scalability and speed of experiments.
 The major and minor components as well as the code that glues the project together will be discussed further in this document. 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{images/SSS_gen.png}
-\caption{Generation Pipeline}
-\label{fig:SSS generator}
-\end{figure}
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=0.9\textwidth]{images/SSS_gen.png}
+% \caption{Generation Pipeline}
+% \label{fig:SSS generator}
+% \end{figure}
 
 \subsection{The Generator}
 We used the python based Pippi library for our generator implementation\footnote{https://github.com/luvsound/pippi}. This library uses a C back-end and focuses on fast offline generation. We define a Synth as the smallest unit of sound generation. A single Synth can be fairly expressive on its own, but we also allow a combination of Synths, which we call a Synth Stack. Each Synth takes in multiple parameters (parameter-set) and generates a sound. If the stack size is larger than 1, the combination of these individual parameter-sets is treated as the parameter-set for the stack. 
 
 \subsection{The Ear}
 The most challenging and important component of the project; the ear can be any method of evaluating a piece of audio. The most basic representation of a piece of digital audio is via list of numbers and a sampling-rate. For simplicity, we fix the sampling rate to 41,000 per second across all components of this project. An array representation of audio is the representation of the audio within the time domain. More commonly, the frequency domain is used for MIR tasks.
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{images/SSS_ear.png}
-\caption{Evaluation Using the Ear}
-\label{fig:SSS generator}
-\end{figure}
+% \begin{figure}[H]
+% \centering
+% \includegraphics[width=\textwidth]{images/SSS_ear.png}
+% \caption{Evaluation Using the Ear}
+% \label{fig:SSS generator}
+% \end{figure}
 
 \begin{figure}[h!]
 \centering
