@@ -82,8 +82,6 @@ Numerous deep, neural network models have been proposed and utilized for the pur
 Automatic programming of virtual synthesizers has also been a topic of interest. In early 2000s, Interactive Genetic Algorithms (IGA's) were utilized for the generation of new sounds with various sound-engines \cite{johnson1999exploring,dahlstedt2001creating}. More recent work by Yee-King et al. \cite{yee2018automatic} used LSTM and genetic algorithms to find the exact parameters used to create a group of sounds. The sounds approximated were made by the same virtual synthesizer, not an external source; making the eventual replication certain, even with random search. Since this work more focused on pads and textures rather than drums, feature matching in this also appears to not be concerned with the envelope of the sounds, but rather the frequency content within arbitrary time windows. Yet another recent, impressive work by Esling et al. used a large dataset of over 10,000 presets for a commercial VST synthesizer to learn a latent parameter space which can be sampled for creation of new audio \cite{esling2019universal}. As stated before, our work presents a rapid approximation of percussion sounds with no previous knowledge about the sonic capabilities of our virtual synthesizer, exploring the actual parameter space rather than its latent representation. 
 \section{Implementation}
 \label{impl}
-\subsection{Design}
- 
 % \begin{figure}[H]
 % \centering
 % \includegraphics[width=0.9\textwidth]{images/SSS_gen.png}
@@ -91,8 +89,38 @@ Automatic programming of virtual synthesizers has also been a topic of interest.
 % \label{fig:SSS generator}
 % \end{figure}
 
-\subsection{The Generator}
-We used the python based Pippi library for our generator implementation\footnote{https://github.com/luvsound/pippi}. This library uses a C back-end and focuses on fast offline generation. We define a Synth as the smallest unit of sound generation. A single Synth can be fairly expressive on its own, but we also allow a combination of Synths, which we call a Synth Stack. Each Synth takes in multiple parameters (parameter-set) and generates a sound. If the stack size is larger than 1, the combination of these individual parameter-sets is treated as the parameter-set for the stack. 
+\subsection{Virtual Synthesizer}
+We used the python based Pippi library for sound generation\footnote{https://github.com/luvsound/pippi}. This library uses a C back-end and focuses on fast offline generation of audio signals. In our implementation, a synthesizer can have any number of submodules. We call this number the \textit{stack size}. See table \ref{table:1} for the range of parameters each submodule can take. We call the sets of parameters that characterize a Synth's submodules a \textit{program} (analogous to a preset).  Each submodule can make an audio signal with the length of 0.1-1 second. If a Synth has a stack size of more than 1, these audio signals are overlapped and the total amplitude is normalized.\\  
+\begin{table}
+\begin{tabular}{ |c|c|c| } 
+\hline
+Parameters & Value Range & notes and constraints\\
+\hline \hline
+Attack & 0-3 & A-D-S-R values relative\\
+Decay & 0-3 & relative to A-S-R\\
+Sustain & 0-3 & relative to A-D-R\\
+Release & 0-3 & relative to A-D-S\\
+OSC type & sine,square,saw & tone type\\
+IsNoise & boolean & whether to generate noise\\
+Sample Length & 0-1 second & - \\
+StartTime & 0-1 second & Length+Start<1\\
+Amplitude & 0.1-1 & 1 = max amplitude\\
+Pitches(notes) & list of pitches &  range of C0(16.35hz) to B9 \\
+HP filter Cuttoff & 0-20000 & -\\
+LP filter Cuttoff & HP-20000 & never lower than HP cutoff\\
+Filter Order & 4,8,16 & butterworth filter order \\
+\hline
+\end{tabular}
+\caption{Synthesizer Submodule Parameters}
+\label{table:1}
+\end{table}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{images/specplot.png}
+\caption{Mel-spectrum representation of a randomly generated sample. Bigger stacks give us more complex signals, but we find that ever stacks of size 1 can be powerful with the right parameters. }
+\label{fig:spectrum grid}
+\end{figure}
+
 
 \subsection{The Ear}
 The most challenging and important component of the project; the ear can be any method of evaluating a piece of audio. The most basic representation of a piece of digital audio is via list of numbers and a sampling-rate. For simplicity, we fix the sampling rate to 41,000 per second across all components of this project. An array representation of audio is the representation of the audio within the time domain. More commonly, the frequency domain is used for MIR tasks.
@@ -103,12 +131,7 @@ The most challenging and important component of the project; the ear can be any 
 % \label{fig:SSS generator}
 % \end{figure}
 
-% \begin{figure}[h!]
-% \centering
-% \includegraphics[width=0.5\textwidth]{images/specplot.png}
-% \caption{Mel-spectrum representation of a randomly generated sample}
-% \label{fig:SSS generator}
-% \end{figure}
+
 All we require from the ear is to give us probabilities of an audio sample belonging to various sound (drum and none-drum) categories. It should be self-evident that these probabilities should sum up to 1.\\
 
 We have implemented several methods of feature extraction thus far and successfully separated different drum categories in interesting ways, visualized in the "interactive\_separation\_graph.ipynb" notebook. A common pitfall of most feature extraction methods implemented is that they do not consider the temporal trends within the audio, making them highly susceptible to errors when evaluating audio that should not belong to any of the categories.\\

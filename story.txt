@@ -15,8 +15,6 @@ I can train an virtual drummer's ear to discriminate if a generated sound is a d
 
 *** Imagine you learned the distribution, now you have pippi going and you keep hitting kick and you hear a new kick each time and it is a kick because you know the distribution ***
 Prior work
-
-
 Ear Methodology
 Train a classifier on drum samples to produce ear
 Evaluate classifier with F-1 and other ML measures
