@@ -52,7 +52,7 @@ Additionally, as we observed a general lack of copyright-free percussive sample-
 
 \section{Introduction}
 \subsection{Terminology}
-\todo[inline,color=green!30]{I'd like to define terms such as VSTs, audio effects, Synthesizers, paramters and presets here. I throw these terms around a lot and I think some might be confused by their meaning. Is this the appropriate place for that? I'd like the read to know these definionts before reading the intro. I can try to keep it brief and engaging}
+\todo[inline,color=green!30]{I'd like to define terms such as VSTs, audio effects, Synthesizers, paramters and presets here. I throw these terms around a lot and I think some might be confused by their meaning. Is this the appropriate place for that? I'd like the reader to know these definitions before reading the intro. I can try to keep it brief and engaging}
 \subsection{Background and Motivation}
 The rise of Digital Audio Workstations (DAW) \cite{leider2004digital} and Virtual Studio Technology (VST) based plug-ins \cite{tanev2013virtual} have rapidly transformed the sonic and material landscape of music production in the recent years. Coupled with this rise in popularity is a vast array of commercial products and services dedicated to satiating the need of amateur and professional music producers for unique sounds; most commonly via audio samples: one-shot drum samples, long sustained notes (commonly referred to as pads or textures), and loops(percussive or melodic) are common deliverables. Two notable examples of these commercial services are \textit{loopmasters}\footnote{loopmasters.com} and \textit{splice.com}\footnote{splice.com}. Furthermore, VST plug-ins can emulate complex audio synthesizers and effects, which some producers may find daunting or time consuming to work with from scratch. In many cases, VST plug-in vendors or unaffiliated enthusiasts sell additional presets for these plugins, targeted towards producers who do not have the time or interest in creating their own. Producers may further modify these presets until their desired sound is reached.\\
 Our work is motivated by the idea of finding new, convenient methods for the expansion of a music producer's library of sounds. Primarily with generation of novel, one-shot audio samples but also with automated search and creation of presets for virtual synthesizers that a producer might find  interesting. Using the generation of short, percussive audio samples as a starting point, this project is a proof of concept for promising avenues towards our motivational goal.\\
@@ -74,11 +74,11 @@ While the main focus of this project is the generation of novel percussive sound
 
 \subsection{Related Work and Contradistinctions}
 \label{related}
-Numerous deep, neural network models have been proposed and utilized for the purpose of signal generation in recent years. WaveGans and WaveNet have been subject to significant improvements and experiments since their proposal \cite{nsynth2017}\colorbox{green!=40}{will add more references} and recently, Variational AutoEncoders (VAE's) have been utilized for generation of short percussive samples \cite{aouameur2019neural,ramires2019timbfeat}. In this work however, we opt to use digital signal processing methods to create a virtual synthesizer for the generation of audio signals, as it provides several unique advantages:
+Numerous deep, neural network models have been proposed and utilized for the purpose of signal generation in recent years. WaveGans and WaveNet have been subject to significant improvements and experiments since their proposal \colorbox{green!=40}{\cite{nsynth2017} + Many more references to be added.} Even more recently, Variational AutoEncoders (VAE's) have been utilized for generation of short percussive samples \cite{aouameur2019neural,ramires2019timbfeat}. In this work however, we opt to use digital signal processing methods to create a virtual synthesizer for the generation of audio signals, as it provides several unique advantages:
 \begin{enumerate}[label=\roman*]
   \item Fast, offline rendering of audio with no relience on GPU, currently not possible with state of the art models such as parallel WaveGan \cite{yamamoto2019parallel} and parallell WaveNet \cite{oord2017parallel}. 
-  \item Rendering at high sampling rates with little performance issues: Performance speed being a common issue, the standard sampling rate in most audio generation work utilizing neural networks appears to be under 24 khz \cite{yamamoto2019parallel,oord2017parallel,aouameur2019neural,ramires2019timbfeat}. However, a significant number of untrained human ears can detect a change in quality of audio between sampling rates of 192 khz and the industry standard of 44.1 khz \cite{reiss2016meta}, with a dramatic increase in quality detection after training. Therefore we can safely assume that most producers would prefer their audio samples have sampling rates of 44.1 khz or higher. 
-  \item Neural networks are often viewed as unexplainable black box solutions. Some models such as VAE's can learn an underlying latent space of parameters and capture the "essence" of the different labels in a dataset. However, these spaces are learned in an unsupervised manner and must be manually analysed, perhaps extensively, before they can be understood \cite{esling2018generative}. The use of a virtual synthesizer for audio generation makes our parameters readily understandable and easily modifiable. \\
+  \item Rendering at high sampling rates: Performance speed being a common issue, the standard sampling rate in most audio generation work utilizing neural networks appears to be under 24 khz \cite{yamamoto2019parallel,oord2017parallel,aouameur2019neural,ramires2019timbfeat}. However, a significant number of untrained human ears can detect a change in quality of audio between sampling rates of 192 khz and the industry standard of 44.1 khz \cite{reiss2016meta}, with a dramatic increase in quality detection after training. Therefore we can safely assume that most producers would prefer their audio samples have sampling rates of 44.1 khz or higher. 
+  \item Neural networks are often viewed as unexplainable black box solutions. Some models such as VAE's can learn an underlying latent space of parameters and capture the "essence" of the different labels in a dataset. However, these spaces are learned in an unsuperv manner and must be manually analysed, perhaps extensively, before they can be understood \cite{esling2018generative}. The use of a virtual synthesizer for audio generation makes our parameters readily understandable and easily modifiable. \\
   
 \end{enumerate}
 Automatic programming of virtual synthesizers has also been a topic of interest. In early 2000s, Interactive Genetic Algorithms (IGA's) were utilized for the generation of new sounds with various sound-engines \cite{johnson1999exploring,dahlstedt2001creating}. More recent work by Yee-King et al. \cite{yee2018automatic} used LSTM and genetic algorithms to find the exact parameters used to create a group of sounds. The sounds approximated were made by the same virtual synthesizer, not an external source; making the eventual replication certain, even with random search. Since this work more focused on pads and textures rather than drums, feature matching in this also appears to not be concerned with the envelope of the sounds, but rather the frequency content within arbitrary time windows. Yet another recent, impressive work by Esling et al. used a large dataset of over 10,000 presets for a commercial VST synthesizer to learn a latent parameter space which can be sampled for creation of new audio \cite{esling2019universal}. As stated before, our work presents a rapid approximation of percussion sounds with no previous knowledge about the sonic capabilities of our virtual synthesizer, exploring the actual parameter space rather than its latent representation. 
@@ -145,7 +145,6 @@ We used the python based Pippi library for sound generation\footnote{https://git
 
 \subsection{The Ear}
 We defined an ear as any method of evaluating a piece of audio, capable of "listening" to a piece of audio and giving it a score (or a list of scores) based on how well it satisfies certain criteria. Since in this work we are mainly focused on percussive generation, what we require from the ear is to give us probabilities of an audio sample belonging to various sound (drum and none-drum) categories. As our synthesizer outputs are deterministic for all programs, allowing us to associate the categorical probabilities of each sound with the program that generated it; navigating our synthesis towards parameters which give us the desired sonic output.\\
-
 %  The most basic representation of a piece of digital audio is via list of numbers and a sampling-rate. For simplicity, we fix the sampling rate to 41,000 per second across all components of this project. An array representation of audio is the representation of the audio within the time domain. More commonly, the frequency domain is used for MIR tasks.
 We have implemented several methods of feature extraction and successfully separated different drum categories in interesting ways. 
 \todo[inline, color=green!30]{is this the right place to show off some t-sne graphs of how various feature extraction methods seperated drum categories?}
@@ -166,6 +165,21 @@ Temporal trends may be deduced from a spectrum representation of sound. A convol
 %
 % How Can The Synth and Ear Interact?
 %
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\linewidth]{images/random_ranks.png}
+\caption{\colorbox{green!=40}{labels bigger + show other stack sizes} Showing proportions of categorical ranks for around 50,000 randomly generated sounds. Only showing ranks 1-5. About 90\% received the rank of 1 (blue portion of the bar) for the "synth" category, meaning that the ear correctly gave the highest probability to the sound being from a synth combination. We are interested in the small percentages of random generations that trick the ear due to coincidentally being similar to actual drums (i.e those who received a rank of 1) }
+\todo[inline, color=blue!30]{When looking for the best sounds of each category, could use ranks 2 and 3 etc. as well, however:
+\unexpanded{\unexpanded{
+\begin{itemize}
+    \item We must figure out how to penalize their parameters
+    \item The task requires even more confidence in ear,
+\end{itemize} 
+}}} 
+
+
+\label{fig:rank portions}
+\end{figure}
 \subsection{How Can The Synth and Ear Interact?}
 
 \begin{figure*}[htbp]
@@ -186,38 +200,83 @@ We utilize our tools in three different methods of generation, with their specif
 \item Genetic Search: We treat our parameters as genes and attempt to use evolutionary search algorithms to find programs that the ear deems most fit.\\
 \end {enumerate} 
 \todo[inline,color=blue!30]{As seen in Figure \ref{fig:rank portions}, there is a bias in random generation towards making higher ranking hats and kicks and lower ranking shakers, claps. Is this bias because of Synth structure or a problem with the ear? Will analyse further after updating ear}
-\begin{figure}[h!]
-\centering
-\includegraphics[width=1\linewidth]{images/random_ranks.png}
-\caption{\colorbox{green!=40}{will update and make labels bigger} Showing proportions of categorical ranks for around 50,000 randomly generated sounds. Only showing ranks 1-5. About 90\% received the rank of 1 (blue portion of the bar) for the "synth" category, meaning that the ear correctly gave the highest probability to the sound being from a synth combination. We are interested in the small percentages of random generations that trick the ear due to coincidentally being similar to actual drums (i.e those who received a rank of 1) }
-\todo[inline, color=blue!30]{When looking for the best sounds of each category, could use ranks 2 and 3 etc. as well, however:
-\unexpanded{\unexpanded{
-\begin{itemize}
-    \item We must figure out how to penalize their parameters
-    \item The task requires even more confidence in ear,
-\end{itemize} 
-}}} 
 
-
-\label{fig:rank portions}
-\end{figure}
 \section{Novel Generations}
 \label{gens}
 \subsection{The Goal}
- Given a category, our aim is to use random generations to guide an algorithm towards novel generation of drums for that category.
-
-\subsection{Methodologies}
+ Given a category, our aim is to use random generations to guide an algorithm towards novel generation of drums for that category. We evaluate each method by measuring how many samples of categories \textit{kick,snare} and \textit{hat} can be produced in under a minute. Finally we show results of a survey conducted to measure the quality of these samples. 
+\subsection{General Methods}
 \subsubsection{Random Generation}
-
+To establish a benchmark, we seek to establish the likelihood of generating samples of each category if we generate programs for various stack sizes by random selection of parameters. \\
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{\linewidth}
+\includegraphics[width=0.48\linewidth]{example-image-a}
+\includegraphics[width=0.48\linewidth]{example-image-a}
+\label{fig:1stack}
+\setcounter{subfigure}{2}%
+\end{subfigure}
+\caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosesn categories in under a minute}
+\label{fig:rand-graphs}
+\end{figure}
 \subsubsection{Multivariate Normal}
-Some success and extremely fast and scalable once the parameter space is calculated. Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. 
+Some success and extremely fast and scalable once the parameter space is calculated. A well known issue with this apporach is that the parameter space for virtual synthesizers are often neither differenciable nor gaussian \cite{esling2019universal} (a couple more papers also talked about this, I have to find them). Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. \\
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{\linewidth}
+\includegraphics[width=0.48\linewidth]{example-image-b}
+\includegraphics[width=0.48\linewidth]{example-image-b}
+\label{fig:1stack}
+\setcounter{subfigure}{2}%
+\end{subfigure}
+\caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosesn categories in under a minute}
+\label{fig:multi-graphs}
+\end{figure}
 
 \subsubsection{Evolutionary Search}
 Implemented evolutionary search using DEAP \citep{DEAP_JMLR2012}. A parameter set is assumed to be an individual with each parameter being its genes. To measure an individuals fitness, we use the formula $fitness=score-rank$. As generations evolve, a Hall-of-Fame list with a fixed size tracks the best individuals to ever live in any given generation, updating itself after each batch of off-springs is evaluated.\\
 To ensure diversity of the HOF individuals, the fitness score should also consider some measure of uniqueness. A weighted minkowski distance \footnote{https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html} between the genes of an offspring and the HOF individuals may be a good measurement.\\
-A generation of $N$ individuals are initialized(randomly or using already existing ranked parameters). To create the offspring generation, each generation goes through mutations and in-place gene crossovers. The new generation consists of the top 80\% of the offspring generation and 20\% new individuals to quicken gene diversity. If the new individuals are coming directly from previously measured high scoring parameter sets, we ensure that they cannot be directly added to HOF without going through mutations and crossovers first. 
+A generation of $N$ individuals are initialized(randomly or using already existing ranked parameters). To create the offspring generation, each generation goes through mutations and in-place gene crossovers. The new generation consists of the top 80\% of the offspring generation and 20\% new individuals to quicken gene diversity. If the new individuals are coming directly from previously measured high scoring parameter sets, we ensure that they cannot be directly added to HOF without going through mutations and crossovers first.\\
 
-
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{\linewidth}
+\includegraphics[width=0.48\linewidth]{example-image-c}
+\includegraphics[width=0.48\linewidth]{example-image-c}
+\label{fig:1stack}
+\setcounter{subfigure}{2}%
+\end{subfigure}
+\caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosesn categories in under a minute}
+\label{fig:evo-graphs}
+\end{figure}
+\subsubsection{Survey of Generated Drums}
+\label{survey}
+\colorbox{green!=30}{Finalize ear,generate,make survey.} The survey will be sent out. I know a few producers who are willing to do this.
+3 algorithms, 3 categories, 10 samples for each algorithm and category pair, 2 seconds to listen to each sample-> 3 minutes for listening
+I imagine survey will be around 5-6 minutes long.
+\subsubsection{Contrasting Ear Scores With Survey Results}
+\colorbox{green!=30}{pending section \ref{survey}}
+\section{Code and Database}
+\colorbox{green!=30}{One last thing to do, will take a 1 day}\\
+\colorbox{blue!=30}{Should this section be at the start of the paper?Appendix?}\\
+talk about  categories, sources, dataprocessing. 
+Code for the data processing is written, I need to download the no-copyright sounds, run the code and host the results. 
+Give link for people to download it, show where to find the scripts for database expansion.
+\section{Summary and Conclusions}
+\colorbox{green!=30}{Points I want to make:}
+\begin{itemize}
+    \item Our methodology was successful in generating novel examples of some percussion categories.
+    \item With the right implementation of DSP methods to create a synth, Genetic search is viable for finding  desired programs and parameters.
+    \item When possible, using DSP methods instead of NNs is preferable in many ways(speed,computation,hardware requirements).\\
+    \colorbox{green!=30}{Include some speed measurements in appendix?}
+    \item ...
+\end{itemize}
+\section{Future Work}
+\colorbox{blue!=30}{Should really think this through}
+\begin{itemize}
+    \item Potential for other generative methods (e.g reinforcement learning)
+    \item Making the synth's sound range more diverse while maintaining speed and efficiency
+\end{itemize}
 \bibliographystyle{abbrv}
     \bibliography{nime-references} 
 \end{document}
