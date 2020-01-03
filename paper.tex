@@ -106,7 +106,13 @@ Filter Order & 4,8,16 & butterworth filter order \\
 \caption{Synthesizer Submodule Parameters}
 \label{table:1}
 \end{table}
-
+\subsection{Data And Project Replication}
+\colorbox{green!=30}{One last thing to do, will take a 1 day}\\
+\colorbox{green!=30}{need to finalize database}\\
+\colorbox{blue!=30}{Should this section be at the start of the paper?The End? Appendix?}\\
+talk about  categories, sources, data processing. 
+Code for the data processing is written, I need to download the no-copyright sounds, run the code and host the results. 
+Give link for people to download it, show where to find the scripts for database expansion.
 \section{Implementation}
 \label{impl}
 
@@ -158,7 +164,7 @@ Temporal trends may be deduced from a spectrum representation of sound. A convol
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{images/cnn_ear.png}
-\caption{Model working well on a test set}
+\caption{confusion matrix of the model working well on a test set. \colorbox{green!=30}{will be updated with new ear.}}
 \label{fig:ok ear}
 \end{figure}
 \todo[inline,color=green!30]{ will add f-measure calculations and other confidence inducing graphs (for example I have a grid of spectrums with the ear's guess vs the actual label under each spectrum, I can colorize the grid depending on whether the guess was correct or not). Code in the notebooks. After updating ear, I will make them look presentable and add them.}
@@ -206,8 +212,9 @@ We utilize our tools in three different methods of generation, with their specif
 \subsection{The Goal}
  Given a category, our aim is to use random generations to guide an algorithm towards novel generation of drums for that category. We evaluate each method by measuring how many samples of categories \textit{kick,snare} and \textit{hat} can be produced in under a minute. Finally we show results of a survey conducted to measure the quality of these samples. 
 \subsection{General Methods}
+\colorbox{green!=30}{The next 3 sections will be modified heavily after the ear is updated.}
 \subsubsection{Random Generation}
-To establish a benchmark, we seek to establish the likelihood of generating samples of each category if we generate programs for various stack sizes by random selection of parameters. \\
+To establish a benchmark, we seek to establish the likelihood of generating samples of each category if we generate programs for various stack sizes by random selection of parameters. We have observed a bias in generations as indicated in figure \ref{gens}.\\
 \begin{figure}[H]
 \centering
 \begin{subfigure}[b]{\linewidth}
@@ -219,7 +226,7 @@ To establish a benchmark, we seek to establish the likelihood of generating samp
 \caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosesn categories in under a minute}
 \label{fig:rand-graphs}
 \end{figure}
-\subsubsection{Multivariate Normal}
+\subsubsection{Multivariate Distribution Sampling}
 Some success and extremely fast and scalable once the parameter space is calculated. A well known issue with this apporach is that the parameter space for virtual synthesizers are often neither differenciable nor gaussian \cite{esling2019universal} (a couple more papers also talked about this, I have to find them). Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. \\
 \begin{figure}[H]
 \centering
@@ -256,17 +263,15 @@ A generation of $N$ individuals are initialized(randomly or using already existi
 With those numbers I imagine survey will be around 5-6 minutes long.
 \subsubsection{Contrasting Ear Scores With Survey Results}
 \colorbox{green!=30}{pending section \ref{survey}}
-\section{Code and Database}
-\colorbox{green!=30}{One last thing to do, will take a 1 day}\\
-\colorbox{blue!=30}{Should this section be at the start of the paper?Appendix?}\\
-talk about  categories, sources, data processing. 
-Code for the data processing is written, I need to download the no-copyright sounds, run the code and host the results. 
-Give link for people to download it, show where to find the scripts for database expansion.
+
 \section{Summary and Conclusions}
 \colorbox{green!=30}{Points I want to make:}
 \begin{itemize}
     \item Our methodology was successful in generating novel examples of some percussion categories.
-    \item With the right implementation of DSP methods to create a synth, Genetic search is viable for finding  desired programs and parameters.
+    \item Reiterate the importance of ear.
+    \item There are potential benefits (e.g: pedagogical, software engineering, efficiency, data search, generality of solution, etc.) to separate some audio generation tasks into multiple parts, rather than throwing everything at some neural net. 
+    \item With the right implementation of DSP methods to create a synth, Genetic search (viewed as too slow by previous work) is viable for finding  desired programs and parameters.
+    \item Neural nets are function approximators. You don't need them if the actual function is understandable and simple...(but is our task simple enough? how do I prove it?)
     \item When possible, using DSP methods instead of NNs is preferable in many ways(speed,computation,hardware requirements).\\
     \colorbox{green!=30}{Include some speed measurements in appendix?}
     \item ...
