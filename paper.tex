@@ -16,7 +16,7 @@
 
 % --- Author Metadata here. See Template---
 \conferenceinfo{NIME'20,}{July 21-25, 2020, Royal Birmingham Conservatoire, ~~~~~~~~~~~~ Birmingham City University, Birmingham, United Kingdom.}
-\title{Rapid, (semi-?)Supervised Generation of Novel Percussive Sounds With A Tractable Virtual Synthesizer}
+\title{Rapid, (semi-?)Supervised Generation of Novel Percussive Sounds with a Tractable Virtual Synthesizer}
 
 \label{key}
 \numberofauthors{2} 
@@ -153,7 +153,7 @@ We used the python based Pippi library for sound generation\footnote{https://git
 We defined an ear as any method of evaluating a piece of audio, capable of "listening" to a piece of audio and giving it a score (or a list of scores) based on how well it satisfies certain criteria. Since in this work we are mainly focused on percussive generation, what we require from the ear is to give us probabilities of an audio sample belonging to various sound (drum and none-drum) categories. As our synthesizer outputs are deterministic for all programs, allowing us to associate the categorical probabilities of each sound with the program that generated it; navigating our synthesis towards parameters which give us the desired sonic output.\\
 %  The most basic representation of a piece of digital audio is via list of numbers and a sampling-rate. For simplicity, we fix the sampling rate to 41,000 per second across all components of this project. An array representation of audio is the representation of the audio within the time domain. More commonly, the frequency domain is used for MIR tasks.
 We have implemented several methods of feature extraction and successfully separated different drum categories in interesting ways. 
-\todo[inline, color=green!30]{is this the right place to show off some t-sne graphs of how various feature extraction methods seperated drum categories?}
+\todo[inline, color=green!30]{is this the right place to show off some t-sne graphs of how various feature extraction methods separated drum categories? Or take the probability vector assigned to samples by the ear and t-sne that? it might be a cool way to visualize show how well the ear is performing}
 A common pitfall of most feature extraction methods implemented is that they do not consider the temporal trends within the audio, making them highly susceptible to errors when evaluating audio that should not belong to any of the categories.\\
 Analysis of the frequency content of a piece of audio using windowing functions is a common MIR procedure. Care must be taking such that information critical to percussion categorization such as envelope and temporal changes are not lost in this process. For example, we do not want a reversed kick sample to be labeled as a kick, or even a drum, even if it has the correct frequency content. There are two interconnected temporal trends to consider: 
 \begin{itemize}
@@ -227,7 +227,10 @@ To establish a benchmark, we seek to establish the likelihood of generating samp
 \label{fig:rand-graphs}
 \end{figure}
 \subsubsection{Multivariate Distribution Sampling}
-Some success and extremely fast and scalable once the parameter space is calculated. A well known issue with this apporach is that the parameter space for virtual synthesizers are often neither differenciable nor gaussian \cite{esling2019universal} (a couple more papers also talked about this, I have to find them). Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. \\
+\colorbox{green!=40}{go over the math quick}\\
+\colorbox{green!=40}{add some graphs showing learned params}\\
+\colorbox{green!=40}{add graphs of learned parameters showing why it's not perfect}\\
+This method is extremely fast and scalable once the parameter space is calculated. But success is limited due to well known issues with this approach. Notably that the parameter space for virtual synthesizers are often neither differentiable nor Gaussian. \cite{esling2019universal} (a couple more papers also talked about this, \colorbox{green!=40}{I have to look them up}). Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. \\
 \begin{figure}[H]
 \centering
 \begin{subfigure}[b]{\linewidth}
@@ -236,12 +239,12 @@ Some success and extremely fast and scalable once the parameter space is calcula
 \label{fig:1stack}
 \setcounter{subfigure}{2}%
 \end{subfigure}
-\caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosesn categories in under a minute}
+\caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosen categories in under a minute}
 \label{fig:multi-graphs}
 \end{figure}
 
 \subsubsection{Evolutionary Search}
-Implemented evolutionary search using DEAP \citep{DEAP_JMLR2012}. A parameter set is assumed to be an individual with each parameter being its genes. To measure an individuals fitness, we use the formula $fitness=score-rank$. As generations evolve, a Hall-of-Fame list with a fixed size tracks the best individuals to ever live in any given generation, updating itself after each batch of off-springs is evaluated.\\
+We implemented evolutionary search using DEAP \citep{DEAP_JMLR2012}. A parameter set is assumed to be an individual with each parameter being its genes. To measure an individuals fitness, we use the formula $fitness=score-rank$. As generations evolve, a Hall-of-Fame list with a fixed size tracks the best individuals to ever live in any given generation, updating itself after each batch of off-springs is evaluated.\\
 To ensure diversity of the HOF individuals, the fitness score should also consider some measure of uniqueness. A weighted minkowski distance \footnote{https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html} between the genes of an offspring and the HOF individuals may be a good measurement.\\
 A generation of $N$ individuals are initialized(randomly or using already existing ranked parameters). To create the offspring generation, each generation goes through mutations and in-place gene crossovers. The new generation consists of the top 80\% of the offspring generation and 20\% new individuals to quicken gene diversity. If the new individuals are coming directly from previously measured high scoring parameter sets, we ensure that they cannot be directly added to HOF without going through mutations and crossovers first.\\
 
