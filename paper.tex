@@ -1,7 +1,7 @@
 \documentclass{nime-alternate} % Uncomment when publishing final version
 % Uncomment only one of the ones below
-\usepackage{anonymize} 		   %Uncomment this line to publish
-% \usepackage[blind]{anonymize}%Uncomment this line for blind review
+% \usepackage{anonymize} 		   %Uncomment this line to publish
+\usepackage[blind]{anonymize}%Uncomment this line for blind review
 \usepackage[utf8]{inputenc}
 
 \usepackage{float}
@@ -16,7 +16,7 @@
 
 % --- Author Metadata here. See Template---
 \conferenceinfo{NIME'20,}{July 21-25, 2020, Royal Birmingham Conservatoire, ~~~~~~~~~~~~ Birmingham City University, Birmingham, United Kingdom.}
-\title{Rapid, (semi-?)Supervised Generation of Novel Percussive Sounds with a Tractable Virtual Synthesizer}
+\title{Percussive Sound Generation with Virtual Listeners and Modular Synthesizers}
 
 \label{key}
 \numberofauthors{2} 
@@ -38,11 +38,9 @@
 \maketitle
 
 \begin{abstract}
-With the generation of novel, high quality, one shot percussive sounds as our end goal, we implemented a set of modular software components utilized to form a pipeline for guided generation of sounds. The most crucial of these components are a "virtual ear" capable of evaluating a sound's proximity to different drum types and an efficient, tractable "virtual synthesizer" with a rich set of parameters capable of generating a wide range of sounds.\\ 
-We aimed to design our software such that we can utilize our components in various experimental ways; hence, in order to established an adequate level of confidence in our components, we discuss the implementation, limitations, and evaluations of the \textit{virtual synthesizer} and \textit{virtual ear}. Next, we present our findings and assessments in regards to the three different methodologies utilized for the generative process of percussive sounds:  \begin {enumerate*} [label=(\roman*)]
-\item random generation \item multivariate distribution sampling and \item evolutionary search.\\
-\end {enumerate*} 
-Additionally, as we observed a general lack of copyright-free percussive sample-packs as well as a lack of unified approach for obtaining such a data-set by fellow researchers \cite{aouameur2019neural,ramires2019timbfeat}, we aim to ameliorate the issue by presenting a copyright free sample-pack of categorized percussion sounds. Furthermore, we have included in our project source code \footnote{\url{https://github.com/imilas/Synths_Stacks_Search}} a set of scripts to further expand the sample pack via royalty free sources. 
+Digital sound artists often require a variety of percussive samples for their music. We observed a lack of copyright-free one-shot percussive sample-packs for purposes of research and music creation. Yet for more than two decades, research involving digital synthesis, genetic search, and neural networks has been used to invent and approximate novel sounds. Our goal is to generate one-shot percussive samples by leveraging modern AI technologies alongside scalable signal generation methods. Could we generate novel drum sounds through machine learning, heuristic search and modular synthesizers? We centered our approach around the combination of two central components: \begin {enumerate*} [label=(\roman*)] \item a "virtual ear" capable of learning key features of various sound groups and evaluating the proximity of unheard sounds to desired sets and \item a dynamic virtual synthesizer with a rich set of tractable parameters\end{enumerate*}. We present a generative pipeline that utilizes robust digital signal processing methods and is guided by supervised learning and genetic search towards generation of novel, high-quality, one-shot percussive sounds. We present our findings and measurements of the various approaches taken towards the implementation of the virtual ear, virtual synthesizer, and generative pipeline; hoping to expose the advantages and shortcomings of the employed methodologies and their practicality in future works via a clear demonstration of their capabilities relative to our stated goal. We also discuss and share our curated dataset of sounds along with our codebase \footnote{\url{https://github.com/imilas/Synths_Stacks_Search}} which can be used for its further expansion.
+
+
 \keywords{drum, percussion, synthesis, MIR, ML, genetic, search}
 \end{abstract}
 % See template for CCS classification. 
@@ -64,7 +62,7 @@ Towards our goal of generating original audio, we found the proper implementatio
     \item \textit{Virtual Synthesizer}:A flexible, deterministic, and tractable generator which can create audio. The core of our implementation made use of pippi, \footnote{https://github.com/luvsound/pippi} a fast, offline focused python DSP library with a C backend. We additionally used the scipy \cite{jones2001scipy} library a few audio effects that we found lacking in pippi. 
     \item \textit{Virtual Ear}: An ear that returns an evaluation of an audio sample; estimating the effectiveness of an audio sample's fulfillment of a producers requirements. The ear's evalutations guides the generation process towards a desired path, making the implementation and training of the ear crucial to the sounds which are generated. A particularly effective implementation was done by using a labeled set of percussive and non-percussive audio files to train a custom model (combination of a simple Convolutional Neural Net (CNN) and a custom envelope estimation algorithm), giving us a "virtual drum detector ear". \\
 \end{itemize}
-Following the Unix Philosophy \cite{gancarz2003linux}, our components are designed with modularity and parallelizability in mind. This allows each component to be debugged, modified and improved without requiring modifications in other components; while additionally increasing the scalability and speed of experiments.
+Our components are designed with modularity and parallelizability in mind. This allows each component to be debugged, modified and improved without requiring modifications in other components; additionally increasing the scalability and speed of experiments.
 Section \ref{impl} contains further discussion of the components as well as the code that glues the project together.\\ 
 While the main focus of this project is the generation of novel percussive sounds, our methodology indicates promising results with regards to creation of new presets for any virtual synth without the need for a-priori knowledge of the functions of its parameters (i.e the effect of parameter modulation on the sonic output). We also demonstrate the viability of a few lesser explored avenues for the purposes of audio synthesis and Music Information Retrieval (MIR), notably:
 \begin{enumerate}[label=\roman*]
@@ -82,6 +80,20 @@ Numerous deep, neural network models have been proposed and utilized for the pur
   
 \end{enumerate}
 Automatic programming of virtual synthesizers has also been a topic of interest. In early 2000s, Interactive Genetic Algorithms (IGA's) were utilized for the generation of new sounds with various sound-engines \cite{johnson1999exploring,dahlstedt2001creating}. More recent work by Yee-King et al. \cite{yee2018automatic} used LSTM and genetic algorithms to find the exact parameters used to create a group of sounds. The sounds approximated were made by the same virtual synthesizer, not an external source; making the eventual replication certain, even with random search. Since this work more focused on pads and textures rather than drums, feature matching in this also appears to not be concerned with the envelope of the sounds, but rather the frequency content within arbitrary time windows. Yet another recent, impressive work by Esling et al. used a large dataset of over 10,000 presets for a commercial VST synthesizer to learn a latent parameter space which can be sampled for creation of new audio \cite{esling2019universal}. As stated before, our work presents a rapid approximation of percussion sounds with no previous knowledge about the sonic capabilities of our virtual synthesizer, exploring the actual parameter space rather than its latent representation. 
+
+
+\subsection{Data And Project Replication}
+\label{data}
+\colorbox{green!=30}{One last thing to do, will take a 1 day}\\
+\colorbox{green!=30}{need to finalize database}\\
+\colorbox{blue!=30}{Should this section be at the start of the paper?The End? Appendix?}\\
+talk about  categories, sources, data processing. 
+Code for the data processing is written, I need to download the no-copyright sounds, run the code and host the results. 
+Give link for people to download it, show where to find the scripts for database expansion.
+\section{Implementation}
+\label{impl}
+\subsection{Virtual Synthesizer}
+We used the python based Pippi library for sound generation\footnote{https://github.com/luvsound/pippi}. This library uses a C back-end and focuses on fast offline generation of audio signals. In our implementation, a synthesizer can have any number of submodules. The parameters that deterministically dictate the output signal of the submodule as well as the range of values each paramter can take are shown in table 1 \ref{table:1} We call this number the \textit{stack size}. For the range of parameters each submodule can take. We call the sets of parameters that characterize a Synth's submodules a \textit{program} (analogous to a preset).  Each submodule can make an audio signal with the length of 0.1-1 second. If a Synth has a stack size of more than 1, these audio signals are overlapped and the total amplitude is normalized.\\
 \begin{table}[h!]
 \centering
 \resizebox{\columnwidth}{!}{\begin{tabular}{ |c|c|c| } 
@@ -99,27 +111,13 @@ StartTime & 0-1 second & Length+Start<1\\
 Amplitude & 0.1-1 & 1 = max amplitude\\
 Pitches(notes) & list of pitches &  range of C0(16.35hz) to B9 \\
 HP filter Cuttoff & 0-20000 & -\\
-LP filter Cuttoff & HP-20000 & never lower than HP cutoff\\
+LP filter Cuttoff & 20000-HP & never lower than HP cutoff\\
 Filter Order & 4,8,16 & butterworth filter order \\
 \hline
 \end{tabular}}
-\caption{Synthesizer Submodule Parameters}
+\caption{Synthesizer Submodule Parameters. Despite the simplicity of the paramters and our efforts at constraining the ranges, the number of paramters that can be randomly chosen for each submodule is in the order of $10^{15}$ }
 \label{table:1}
 \end{table}
-\subsection{Data And Project Replication}
-\colorbox{green!=30}{One last thing to do, will take a 1 day}\\
-\colorbox{green!=30}{need to finalize database}\\
-\colorbox{blue!=30}{Should this section be at the start of the paper?The End? Appendix?}\\
-talk about  categories, sources, data processing. 
-Code for the data processing is written, I need to download the no-copyright sounds, run the code and host the results. 
-Give link for people to download it, show where to find the scripts for database expansion.
-\section{Implementation}
-\label{impl}
-
-
-\subsection{Virtual Synthesizer}
-We used the python based Pippi library for sound generation\footnote{https://github.com/luvsound/pippi}. This library uses a C back-end and focuses on fast offline generation of audio signals. In our implementation, a synthesizer can have any number of submodules. We call this number the \textit{stack size}. See table \ref{table:1} for the range of parameters each submodule can take. We call the sets of parameters that characterize a Synth's submodules a \textit{program} (analogous to a preset).  Each submodule can make an audio signal with the length of 0.1-1 second. If a Synth has a stack size of more than 1, these audio signals are overlapped and the total amplitude is normalized.\\
-
 \begin{figure}[h!]
 \centering
 \begin{subfigure}[b]{\linewidth}
@@ -150,17 +148,22 @@ We used the python based Pippi library for sound generation\footnote{https://git
 \end{figure}
 
 \subsection{The Ear}
-We defined an ear as any method of evaluating a piece of audio, capable of "listening" to a piece of audio and giving it a score (or a list of scores) based on how well it satisfies certain criteria. Since in this work we are mainly focused on percussive generation, what we require from the ear is to give us probabilities of an audio sample belonging to various sound (drum and none-drum) categories. As our synthesizer outputs are deterministic for all programs, allowing us to associate the categorical probabilities of each sound with the program that generated it; navigating our synthesis towards parameters which give us the desired sonic output.\\
-%  The most basic representation of a piece of digital audio is via list of numbers and a sampling-rate. For simplicity, we fix the sampling rate to 41,000 per second across all components of this project. An array representation of audio is the representation of the audio within the time domain. More commonly, the frequency domain is used for MIR tasks.
-We have implemented several methods of feature extraction and successfully separated different drum categories in interesting ways. 
-\todo[inline, color=green!30]{is this the right place to show off some t-sne graphs of how various feature extraction methods separated drum categories? Or take the probability vector assigned to samples by the ear and t-sne that? it might be a cool way to visualize show how well the ear is performing}
-A common pitfall of most feature extraction methods implemented is that they do not consider the temporal trends within the audio, making them highly susceptible to errors when evaluating audio that should not belong to any of the categories.\\
-Analysis of the frequency content of a piece of audio using windowing functions is a common MIR procedure. Care must be taking such that information critical to percussion categorization such as envelope and temporal changes are not lost in this process. For example, we do not want a reversed kick sample to be labeled as a kick, or even a drum, even if it has the correct frequency content. There are two interconnected temporal trends to consider: 
-\begin{itemize}
-    \item Change in amplitude within each frequency bin. Harder to measure and utilize and possibly not as important for our purposes, considering the short length of our samples.
-    \item Overall amplitude change within a sample. Closely linked to ADSR\\. 
-\end{itemize}{}
-Temporal trends may be deduced from a spectrum representation of sound. A convolution net trained on our drum dataset, combined with an algorithm ADSR extraction algorithm led to an ear which can reliably reject junk data and samples with inappropriate wave-shapes. \todo[inline,color=green!30]{This paragraph is lying, I haven't done the ADSR algorithm part yet. Highest priority after writing this paper.}
+What we refer to as an "ear" is any method of evaluating a piece of audio, capable of "listening" to a piece of audio and giving it a score (or a list of scores) based on how well it satisfies certain criteria. Since in this work we are mainly focused on percussive generation, what we require from the ear is to give us probabilities of an audio sample belonging to various categories. As our synthesizer outputs are deterministic for all programs, the ear's evaluations would allow us to associate the categorical probabilities of each sound with the program that generated it. In section \ref{gens} we discuss how these scores were used for navigation of our synthesis towards parameters which give us the desired sonic output.\\
+ With our dataset \ref{data} of labeled drum sounds, we can confidently categorized unlabeled drum sounds, given that we know they are drum sounds. However, a major hurdle towards the implementation of a "drum from non-drum" recognizing ear is that the set of sounds that are not percussive is infinite. Since we can represent different drum groups using our categorized data (closed set), but effective aggregation and feature extraction of non-drum sound data is not practical. We hypothesize that $Task\,1$ falls within the domain of "Open Set Recognition"\cite{scheirer2012toward}. "Open Set Recognition" problem arises when a set that is being categorized has practically infinite diversity, often making learning-by-example impossible without further domain knowledge. While ML techniques can be effective with classification of a closed set of examples, the classification of an infinite set cannot be reliably achieved with current ML methodologies\cite{geng2018recent,mundt2019open}. \\
+  In our case, as discussed in section \ref{survey}, the majority of sounds generated by the synth do not resemble percussion. Even if we only consider 1 second long sounds made with a single stacked synth, the set of synthesizer parameters (and we assume, the sound generated by these paramters) is extremely large. In our case, we determined that there are 2 steps necessary to effectively extract percussive sounds from the randomly generated noise from the virtual synthesizer: 
+  \begin{enumerate}
+   \item  $Task\,1$: Binary separation of sounds with percussive features from non-percussive sounds.
+   \item $Task\,2$: Given confidence that of the sound being categorized is percussive, categorizing the type of drum.
+ \end{enumerate}
+We are interested in extracting generalize features that can be applied in other audio domains. In this work we rely entirely on Fast Fourier Transform (FFT) and by extension Short-time Fourier Transforms (STFT) for feature extraction. Using FFT, a signal can be represented by a vector with each index corresponding to a frequency-bin (a range of frequencies too close to be distinguishable) and the value of the index corresponding to the combined-magnitude of the frequencies within the bin. STFT can be employed when a more accurate representation is desired via the application of the FFT to a sliding time-window on the signal to create a matrix (a list of vectors). This matrix can effectively represent the frequencies present in the signal at each time step, given the right window-length and hop-size (how much the window is shifted at each time-step).\\
+Various works have demonstrated effective reconstruction of signals given their STFT \cite{nawab1983signal,griffin1984signal}. The loss of phase information may be an issue in some domains \cite{sturmel2011signal}, however phase information has little impact on the human auditory experience. If the original signal can be otherwise accurately reconstructed from its STFT, perhaps further transformation and analysis of the STFT may be relied on as source of fundamental features necessary for audible signal categorization. Following this and in the interest of keeping the feature space small and fundamental, other methods of feature extraction which have proven effective at instrument and percussion categorization such as Spectral-Centroids \cite{schubert2004spectral} and Zero-Crossing Rates \cite{gouyon2000use} are not utilized.\\
+Using only the STFT of signals as source of feature extraction, we defined 3 transformation functions which we believe to capture important, unique attributes of percussive sounds. These functions were applied at training time to 1 second audio samples before being sent to a classifier. 
+\begin{enumerate}
+\item Envelope Transformation: The goal of this feature is to capture the changes in loudness for the duration of the signal. Using STFT, we generate a matrix $M_{i \times j}$ with rows $i$ and columns $j$ corresponding to time steps and frequency bins respectively. With values $v_{i \times j}$ indicating the magnitude of the frequency bin $j$ at each time-step $i$. Information about the envelope of the signal can be extracted by summing the values of $M$ for each time-step (or row $i$), giving us a feature vector $v_i$. This vector is then normalized to the range of 0 to 1. The information contained in this vector is similar to that of a Root-Mean-Square measurement.
+\item Frequency Transformation: A static, normalized snap-shot of the the frequencies present within the audio. The calculation of this feature vector is similar to the envelope's, but the summation is along the frequency axis. Another important distinction is that since capturing an adequate frequency resolution is important for this transformation, we utilized shorter hop-sizes and wider windows. A Mel Scale transformation was also applied in hopes that the captured features better represent human perception of frequencies. 
+\item Spectrum Transformation: This function is simply a Mel Scaled STFT with its values normalized from 0-1. Since this features is a 2D matrix rather than a vector, it captures more information about our signal, but requires heavier, more complex computational methods to be utilized. 
+\end{enumerate}   
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\linewidth]{images/cnn_ear.png}
