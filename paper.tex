@@ -118,34 +118,24 @@ Filter Order & 4,8,16 & butterworth filter order \\
 \caption{Synthesizer Submodule Parameters. Despite the simplicity of the paramters and our efforts at constraining the ranges, the number of paramters that can be randomly chosen for each submodule is in the order of $10^{15}$ }
 \label{table:1}
 \end{table}
-\begin{figure}[h!]
+\begin{figure*}[h]
 \centering
-\begin{subfigure}[b]{\linewidth}
-\includegraphics[width=0.3\linewidth]{example-image-a}
-\includegraphics[width=0.3\linewidth]{example-image-b}
-\includegraphics[width=0.3\linewidth]{example-image-c}
-\caption{64 stack}\label{fig:64stack}
-\setcounter{subfigure}{0}%
-\end{subfigure}
 
 \begin{subfigure}[b]{\linewidth}
-\includegraphics[width=0.3\linewidth]{example-image-a}
-\includegraphics[width=0.3\linewidth]{example-image-b}
-\includegraphics[width=0.3\linewidth]{example-image-c}
-\caption{8 stacks}\label{fig:8stacl}
+\includegraphics[width=1\linewidth]{images/ff1.pdf}
+\caption{Organic hat sample}\label{fig:64stack}
 \setcounter{subfigure}{1}%
-\end{subfigure}
-
-\begin{subfigure}[b]{\linewidth}
-\includegraphics[width=0.3\linewidth]{images/specplot.png}
-\includegraphics[width=0.3\linewidth]{images/specplot.png}
-\includegraphics[width=0.3\linewidth]{images/specplot.png}
-\caption{1 stack}\label{fig:1stack}
+\includegraphics[width=1\linewidth]{images/ff2.pdf}
+\caption{Randomly generated audio with percussive qualities, resembling a tight snare}\label{fig:64stack}
+\setcounter{subfigure}{2}%
+\includegraphics[width=1\linewidth]{images/ff3.pdf}
+\caption{A randomly generated noise with a percussive envelop but non-percussive frequency features (modulated pitch)}\label{fig:64stack}
 \setcounter{subfigure}{2}%
 \end{subfigure}
-\caption{Examples of mel-spectrum representations of randomly generated samples. Bigger stacks give us more complex signals, but we find that even stacks of size 1 can be powerful with the right parameters. \colorbox{green!=40}{update this with actual spectrums}}
+
+\caption{Graphed representation of features extracted for 3 different samples. Sample $a$ is an organic hat from our database. sample $b$ is an example of randomly generated noise with percussive qualities that we found suitably similar to a snare sound. Sample $c$ is an example of a randomly generated noise where the spectrum features are necessary for proper classification.}
 \label{fig:stackspectrums}
-\end{figure}
+\end{figure*}
 
 \subsection{The Ear}
 What we refer to as an "ear" is any method of evaluating a piece of audio, capable of "listening" to a piece of audio and giving it a score (or a list of scores) based on how well it satisfies certain criteria. Since in this work we are mainly focused on percussive generation, what we require from the ear is to give us probabilities of an audio sample belonging to various categories. As our synthesizer outputs are deterministic for all programs, the ear's evaluations would allow us to associate the categorical probabilities of each sound with the program that generated it. In section \ref{gens} we discuss how these scores were used for navigation of our synthesis towards parameters which give us the desired sonic output.\\
@@ -160,7 +150,7 @@ Various works have demonstrated effective reconstruction of signals given their 
 Using only the STFT of signals as source of feature extraction, we defined 3 transformation functions which we believe to capture important, unique attributes of percussive sounds. These functions were applied at training time to 1 second audio samples before being sent to a classifier. 
 \begin{enumerate}
 \item Envelope Transformation: The goal of this feature is to capture the changes in loudness for the duration of the signal. Using STFT, we generate a matrix $M_{i \times j}$ with rows $i$ and columns $j$ corresponding to time steps and frequency bins respectively. With values $v_{i \times j}$ indicating the magnitude of the frequency bin $j$ at each time-step $i$. Information about the envelope of the signal can be extracted by summing the values of $M$ for each time-step (or row $i$), giving us a feature vector $v_i$. This vector is then normalized to the range of 0 to 1. The information contained in this vector is similar to that of a Root-Mean-Square measurement.
-\item Frequency Transformation: A static, normalized snap-shot of the the frequencies present within the audio. The calculation of this feature vector is similar to the envelope's, but the summation is along the frequency axis. Another important distinction is that since capturing an adequate frequency resolution is important for this transformation, we utilized shorter hop-sizes and wider windows. A Mel Scale transformation was also applied in hopes that the captured features better represent human perception of frequencies. 
+\item Frequency Transformation: A static, normalized snap-shot of the the frequencies present within the audio. The calculation of this feature vector is similar to the envelope, but the summation is done along the frequency axis. Another important distinction is that since capturing an adequate frequency resolution is important for this transformation, we utilized shorter hop-sizes and wider windows. A Mel Scale transformation was also applied in hopes that the captured features better represent human perception of frequencies. 
 \item Spectrum Transformation: This function is simply a Mel Scaled STFT with its values normalized from 0-1. Since this features is a 2D matrix rather than a vector, it captures more information about our signal, but requires heavier, more complex computational methods to be utilized. 
 \end{enumerate}   
 
@@ -178,28 +168,10 @@ Using only the STFT of signals as source of feature extraction, we defined 3 tra
 \centering
 \includegraphics[width=1\linewidth]{images/random_ranks.png}
 \caption{\colorbox{green!=40}{labels bigger + show other stack sizes} Showing proportions of categorical ranks for around 50,000 randomly generated sounds. Only showing ranks 1-5. About 90\% received the rank of 1 (blue portion of the bar) for the "synth" category, meaning that the ear correctly gave the highest probability to the sound being from a synth combination. We are interested in the small percentages of random generations that trick the ear due to coincidentally being similar to actual drums (i.e those who received a rank of 1) }
-\todo[inline, color=blue!30]{When looking for the best sounds of each category, could use ranks 2 and 3 etc. as well, however:
-\unexpanded{\unexpanded{
-\begin{itemize}
-    \item We must figure out how to penalize their parameters
-    \item The task requires even more confidence in ear,
-\end{itemize} 
-}}} 
-
-
 \label{fig:rank portions}
 \end{figure}
+
 \subsection{How Can The Synth and Ear Interact?}
-
-\begin{figure*}[htbp]
-	\centering
-		\includegraphics[width=0.7\textwidth]{images/SSS_gen.png}
-	\caption{\colorbox{green!=40}{ This graph is bad in many ways.} but would it be worthwhile to have a \textbf{good} flowchart of 
-	the generation pipeline in the paper? }
-	\label{fig:BlockDiagram2}
-\end{figure*}
-\label{fig:generation}
-
 With our Synth and Ear in place, we can quickly generate programs for our Synth, create the corresponding audio sample and get the scores for the audio sample. If the ear returns a vector of categorical probabilities, we can assign categorical ranks to the audio sample. For example, the category with the highest probability will have the rank of 1, second highest would rank 2nd, and the lowest probability will have the rank of n (assuming n categories).\textbf{
 But how can we use this to create percussion sounds?}\\\\
 We utilize our tools in three different methods of generation, with their specific imlpementation discussed in section \ref{gens}.
@@ -229,11 +201,8 @@ To establish a benchmark, we seek to establish the likelihood of generating samp
 \caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosesn categories in under a minute}
 \label{fig:rand-graphs}
 \end{figure}
-\subsubsection{Multivariate Distribution Sampling}
-\colorbox{green!=40}{go over the math quick}\\
-\colorbox{green!=40}{add some graphs showing learned params}\\
-\colorbox{green!=40}{add graphs of learned parameters showing why it's not perfect}\\
-This method is extremely fast and scalable once the parameter space is calculated. But success is limited due to well known issues with this approach. Notably that the parameter space for virtual synthesizers are often neither differentiable nor Gaussian. \cite{esling2019universal} (a couple more papers also talked about this, \colorbox{green!=40}{I have to look them up}). Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. \\
+% \subsubsection{Multivariate Distribution Sampling}
+% This method is extremely fast and scalable once the parameter space is calculated. But success is limited due to well known issues with this approach. Notably that the parameter space for virtual synthesizers are often neither differentiable nor Gaussian. \cite{esling2019universal} (a couple more papers also talked about this, \colorbox{green!=40}{I have to look them up}). Currently our parameters are array indices mapping to different values for Synth components. This makes the assumption that our discrete parameter space is normally distributed or differentiable in-appropriate and prone to errors. \\
 \begin{figure}[H]
 \centering
 \begin{subfigure}[b]{\linewidth}
@@ -249,29 +218,42 @@ This method is extremely fast and scalable once the parameter space is calculate
 \subsubsection{Evolutionary Search}
 We implemented evolutionary search using DEAP \citep{DEAP_JMLR2012}. A parameter set is assumed to be an individual with each parameter being its genes. To measure an individuals fitness, we use the formula $fitness=score-rank$. As generations evolve, a Hall-of-Fame list with a fixed size tracks the best individuals to ever live in any given generation, updating itself after each batch of off-springs is evaluated.\\
 To ensure diversity of the HOF individuals, the fitness score should also consider some measure of uniqueness. A weighted minkowski distance \footnote{https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.minkowski.html} between the genes of an offspring and the HOF individuals may be a good measurement.\\
-A generation of $N$ individuals are initialized(randomly or using already existing ranked parameters). To create the offspring generation, each generation goes through mutations and in-place gene crossovers. The new generation consists of the top 80\% of the offspring generation and 20\% new individuals to quicken gene diversity. If the new individuals are coming directly from previously measured high scoring parameter sets, we ensure that they cannot be directly added to HOF without going through mutations and crossovers first.\\
-
-\begin{figure}[H]
-\centering
-\begin{subfigure}[b]{\linewidth}
-\includegraphics[width=0.48\linewidth]{example-image-c}
-\includegraphics[width=0.48\linewidth]{example-image-c}
-\label{fig:1stack}
-\setcounter{subfigure}{2}%
-\end{subfigure}
-\caption{\colorbox{green!=40}{todo}Graphs showing the effectiveness of this method for producing chosesn categories in under a minute}
-\label{fig:evo-graphs}
-\end{figure}
+A generation of $N$ individuals are initialized randomly. To create the offspring generation, each generation goes through mutations and in-place gene crossovers. The new generation consists of the top 80\% of the offspring generation and 20\% new individuals to quicken gene diversity. If the new individuals are coming directly from previously measured high scoring parameter sets, we ensure that they cannot be directly added to HOF without going through mutations and crossovers first.\\
 \subsubsection{Survey of Generated Drums}
 \label{survey}
-\colorbox{green!=30}{Finalize ear,generate,make survey.} The survey will be sent out. I know a few producers who are willing to do this.
-3 algorithms, 3 categories, 10 samples for each algorithm and category pair, 2 seconds to listen to each sample-> 3 minutes for listening\\
-With those numbers I imagine survey will be around 5-6 minutes long.
-\subsubsection{Contrasting Ear Scores With Survey Results}
-\colorbox{green!=30}{pending section \ref{survey}}
+To measure the quality of the samples produced by our pipeline, we randomly generated around 50-60 samples in the following categories: "snare","kick","hat","clap" and "other" (combination of rims,shakers, and unusal percussive sounds"). These samples were determined to be percussive and then categorized by 4 different models (FC,CNNLSTM,E+F and AVG). We ensured a balanced division between samples of stack sizes 1,2 and 4 (each stack is responsible for a third samples under each category). Both writers then categorized these samples without knowledge of other categorizations (human or computation models). It's important to note that:
+\begin{itemize}
+    \item Humans had an additional category of "bad" for samples that they deemed not appropriate. 
+    \item Human's had the same categorization in 47\% of cases
+    \item The agreement between the authors and AVG was 44\% and 47\%, not significantly lower than agreement with each other. 
+    \item Of 257 samples, both authors agreed with FC, CNNLSTM, AVG and E+F respectively in 78,76,76 and 46 of cases.
+\end{itemize}
+We assess the reliability of agreement between humans and categorization models via the Fleiss' kappa coefficient. The value of 0 or less for this coefficient indicates no agreement beyond random chance, and the value of 1 indicating perfect agreement. Our kappa measurements \ref{kappa_table} lie in within the 3.5-4.5 range, indicating mild to moderate agreement between humans and machines. We again measure this coefficient after dropping samples that were categorized as "bad" by the authors, as samples that humans deem to be "bad" indicate a failure in phase 1 and arguably should not have been categorized by the models at all. Dropping of samples that both authors deemed "bad" causes 8\% reduction of our data (21 samples) and a small increase in kappa score. Dropping samples either reviewer deemed bad resulted in a 30\% reduction of samples and relatively large increase in kappa scores. \\
+\begin{center}
+\begin{table}
+
+ \begin{tabular}{||c c c c c c||} 
+ \hline
+ DropBad? & Sample Size & HvH & H+FC & H+CNN & H+ALL \\ [0.5ex] 
+ \hline
+ No & 257 &0.37 & 0.35 & 0.35 & 0.36 \\ 
+ \hline
+ Yes(if both)& 236 & 0.31 & 0.37 & 0.37 & 0.38 \\
+ \hline
+ Yes(if either)& 180 & 0.47 & 0.50 & 0.48 & 0.46 \\
+ \hline
+ 
+
+\end{tabular}
+\caption{\label{kappa_table}Table of Fleiss' kappa coefficient to measure the degree of agreement between humans (HvH), humans and FC model (H+FC), humans and CNNLSTM model and humans and all models (H+ALL)}
+\end{table}
+
+\end{center}
+
+
 
 \section{Summary and Conclusions}
-\colorbox{green!=30}{Points I want to make:}
+
 \begin{itemize}
     \item Our methodology was successful in generating novel examples of some percussion categories.
     \item Reiterate the importance of ear.
@@ -289,27 +271,9 @@ With those numbers I imagine survey will be around 5-6 minutes long.
     \item Making the synth's sound range more diverse while maintaining speed and efficiency
     \item Can our approach be used for VSTs?
 \end{itemize}
-%ACKNOWLEDGMENTS are optional
-\section{Acknowledgments}
-This section is optional; it is a location for you
-to acknowledge grants, funding, editing assistance and
-what have you.  In the present case, for example, the
-authors would like to thank Gerald Murray of ACM for
-his help in codifying this \textit{Author's Guide}
-and the \textbf{.cls} and \textbf{.tex} files that it describes.
+
 \section{Ethical Standards}
-To ensure objectivity and transparency in research and to ensure that accepted principles of ethical and professional conduct have been followed, authors should include a section “Ethical Standards” before the References, including (if relevant): information regarding sources of funding, potential conflicts of interest (financial or non-financial), informed consent if the research involved human participants, statement on welfare of animals if the research involved animals.
-
-\appendix
-%Appendix A
-\section{section A}
-In case I need an appendix
-\subsection{Example Subsection}
-\section{Section B}
-The sig-alternate.cls file itself is chock-full of succinct
-and helpful comments
-
-%%% Place this com
+We affirm that our work follows the principles of ethical and professional conduct.
 \bibliographystyle{abbrv}
     \bibliography{nime-references} 
 \end{document}
