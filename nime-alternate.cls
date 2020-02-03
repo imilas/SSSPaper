@@ -1464,7 +1464,7 @@
 %
 \global\boilerplate={
 % \begin{tabular}{ l l }
-\parbox{0.32\columnwidth}{\includegraphics[width=0.3\columnwidth]{cc_by.pdf}} 
+\parbox{0.32\columnwidth}{\includegraphics[width=0.3\columnwidth]{images/cc_by.pdf}} 
 %\parbox{0.1\columnwidth}{}
 \parbox{0.68\columnwidth}{
 Licensed under a Creative Commons Attribution 4.0 International License (CC BY 4.0). Copyright remains with the author(s). 
